@@ -5,7 +5,7 @@ import { white } from '../utils/colors'
 import MetricCard from './MetricCard'
 import { addEntry } from '../actions'
 import { removeEntry } from '../utils/api'
-import { timeToString, getDailyReminderValue } from '../utils/helper'
+import { timeToString, getDailyReminderValue } from '../utils/helpers'
 import TextButton from './TextButton'
 
 class EntryDetail extends Component {
@@ -34,7 +34,7 @@ class EntryDetail extends Component {
   }
 
   render() {
-    const { metrics } = this.prop
+    const { metrics } = this.props
 
     return (
       <View style={styles.container}>
