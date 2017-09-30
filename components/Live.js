@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text, View, ActivityIndicator, TouchableOpacity, StyleSheet, Animated } from 'react-native'
 import { Foundation } from '@expo/vector-icons'
 import { purple, white} from '../utils/colors'
 import { Location, Permissions } from 'expo'
@@ -7,9 +7,10 @@ import { calculateDirection } from '../utils/helpers'
 
 export default class Live extends Component {
   state = {
-    coords: 'null',
-    status: 'null',
+    coords: null,
+    status: null,
     direction: '',
+    bounceValue: new Animated.Value(1)
   }
 
   componentDidMount() {
@@ -30,12 +31,12 @@ export default class Live extends Component {
 
   askPermission = () => {
     Permissions.askAsync(Permissions.LOCATION)
-      .then(( status ) => {
+      .then(({ status }) => {
         if (status === 'granted') {
           return this.setLocation()
         }
 
-        this.setState(() => ({ status}))
+        this.setState(() => ({ status }))
       })
       .catch((error) => console.warn('Error asking Location Permission: ', error))
   }
@@ -47,7 +48,14 @@ export default class Live extends Component {
       distanceInterval: 1,
     }, ({ coords }) => {
       const newDirection = calculateDirection(coords.heading)
-      const { direction } = this.state
+      const { direction, bounceValue } = this.state
+
+      if (newDirection !== direction) {
+        Animated.sequence([
+          Animated.timing(bounceValue, { toValue: 1.04, duration: 200 }),
+          Anmiated.spring(bounceValue, { toValue: 1, friction: 4})
+        ]).start()
+      }
 
       this.setState(() => ({
         coords,
@@ -58,7 +66,7 @@ export default class Live extends Component {
   }
 
   render() {
-    const { coords, status, direction } = this.state
+    const { coords, status, direction, bounceValue } = this.state
 
     if (status === null) {
       return <ActivityIndicator style={{marginTop: 30}} />
@@ -95,7 +103,10 @@ export default class Live extends Component {
       <View style={styles.container}>
         <View style={styles.directionContainer}>
           <Text style={styles.header}>You are heading</Text>
-          <Text style={styles.direction}>{direction}</Text>
+          <Animated.Text
+            style={[styles.direction, {transform:[{scale: bounceValue}]}]}>
+              {direction}
+          </Animated.Text>
         </View>
 
         <View style={styles.metricContainer}>
