@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, ActivityIndicator, TouchableOpacity, StyleSheet, Animated } from 'react-native'
 import { Foundation } from '@expo/vector-icons'
-import { purple, white} from '../utils/colors'
+import { purple, white } from '../utils/colors'
 import { Location, Permissions } from 'expo'
 import { calculateDirection } from '../utils/helpers'
 
@@ -53,7 +53,7 @@ export default class Live extends Component {
       if (newDirection !== direction) {
         Animated.sequence([
           Animated.timing(bounceValue, { toValue: 1.04, duration: 200 }),
-          Anmiated.spring(bounceValue, { toValue: 1, friction: 4})
+          Animated.spring(bounceValue, { toValue: 1, friction: 4})
         ]).start()
       }
 
